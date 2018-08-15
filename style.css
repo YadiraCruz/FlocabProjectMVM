@@ -125,6 +125,7 @@ video {
   width: 514px;
   float: right;
   clear: right;
+  padding-top: 25px;
 }
 
 video:last-of-type {
