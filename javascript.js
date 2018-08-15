@@ -29,9 +29,10 @@ navigator.getUserMedia = navigator.getUserMedia ||
 var constraints = {
   audio: true,
   video: { width: 2880, height: 1800 }
+ 
 };
 
-navigator.getUserMedia(constraints, successCallback, errorCallback);
+function setUserMediaURL() { navigator.getUserMedia(constraints, successCallback, errorCallback) };
 
 function successCallback(stream) {
   console.log('getUserMedia() got stream: ', stream);
@@ -47,6 +48,7 @@ function errorCallback(error) {
   console.log('navigator.getUserMedia error: ', error);
 }
 
+/*function setUserMediaURL () {
  navigator.mediaDevices.getUserMedia(constraints)
  .then(function(stream) {
    console.log('getUserMedia() got stream: ', stream);
@@ -59,6 +61,7 @@ function errorCallback(error) {
  }).catch(function(error) {
    console.log('navigator.getUserMedia error: ', error);
  });
+}*/
 
 function handleSourceOpen(event) {
   console.log('MediaSource opened');
@@ -112,6 +115,8 @@ function startRecording() {
       }
     }
   }
+  setUserMediaURL();
+  getUserMediaVideo.controls = false;
   console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
   recordButton.textContent = 'STOP RECORDING';
   playButton.disabled = true;
@@ -124,35 +129,16 @@ function startRecording() {
 
 
 function stopRecording() {
-  //added by NQ
-  //document.getElementById("myDIV").style.display = "none";
-  //var show = function (elem) {elem.style.display='block';
- // };
-  //var hide = function (elem) {elem.style.display='none';
-  //};
-  //var replay = function (elem) {
-    //if (window.getComputedStyle(elem).display === 'block') {
-		//hide(elem);
-		//return;
-  //}
-  //show(elem);
-  //};
-//}
-  //var r=document.getElementById("");
-   //if (r.style.display === "none") {
-     //   r.style.display = "block";
-    //} else {
-  //      r.style.display = "none";
-    //}
-
-
   mediaRecorder.stop();
+  getUserMediaVideo.src = window.URL.createObjectURL(new Blob(recordedBlobs, {type: 'video/webm'}));
+  getUserMediaVideo.controls = true;
   console.log('Recorded Blobs: ', recordedBlobs);
-  recordedVideo.controls = true;
+  //recordedVideo.controls = true;
 }
 function play() {
-  var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-  recordedVideo.src = window.URL.createObjectURL(superBuffer); 
+  setUserMediaURL();
+  getUserMediaVideo.controls = false;
+
 }
 
 function download() {
@@ -169,3 +155,5 @@ function download() {
     window.URL.revokeObjectURL(url);
   }, 100);
 }
+
+setUserMediaURL();
